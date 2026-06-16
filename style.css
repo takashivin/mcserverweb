@@ -482,7 +482,9 @@ body {
     height: 520px;
     overflow: auto;
     padding: 14px 18px;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     background:
         linear-gradient(180deg, rgba(0, 6, 20, 0.96), rgba(0, 9, 26, 0.98));
     scrollbar-color: rgba(86, 204, 242, 0.55) rgba(255, 255, 255, 0.04);
@@ -510,7 +512,6 @@ body {
 
 #terminal {
     width: 100%;
-    min-height: 100%;
     margin: 0;
     color: var(--green);
     font-family: Consolas, "Courier New", monospace;
@@ -518,6 +519,7 @@ body {
     line-height: 1.42;
     white-space: pre-wrap;
     word-break: break-word;
+    flex: 0 0 auto;
 }
 
 .toast-wrap {

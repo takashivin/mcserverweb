@@ -31,3 +31,10 @@ Remember:
 - Trimmed empty tmux capture lines from the top/bottom of terminal output.
 - Added custom scrollbar styling.
 - Mobile terminal height adjusted.
+
+
+## v5 terminal behavior
+- Terminal text now sits at the bottom when the log is short.
+- History is still scrollable upward normally.
+- No unused empty block under the text.
+- Auto-scroll still works, but you can scroll up to inspect history.

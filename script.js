@@ -70,9 +70,8 @@ function setTerminal(text) {
     const terminal = terminalEl();
     const viewport = terminalViewportEl();
 
-    const shouldStickBottom =
-        autoScroll ||
-        (viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 25);
+    const nearBottom = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 25;
+    const shouldStickBottom = autoScroll || nearBottom;
 
     terminal.textContent = cleanTerminalOutput(text);
 
