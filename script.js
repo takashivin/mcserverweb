@@ -1,10 +1,43 @@
-let backend = "https://conflicts-blacks-fruits-while.trycloudflare.com/";
-let token = "0bacbe11-19fb-4571-81e6-93e830a89691";
+let backend = "";
+let token = "";
 let socket = null;
 let statusInterval = null;
 
-function connect() {
-  backend = document.getElementById("backendUrl").value.trim();
+function normalizeBackendUrl(url) {
+  return url.trim().replace(/\/+$/, "");
+}
+
+function setMainStatus(text) {
+  document.getElementById("status").textContent = text;
+  document.getElementById("statusText").textContent = text;
+}
+
+function setStatusDot(mode) {
+  const dot = document.getElementById("statusDot");
+
+  if (mode === "online") {
+    dot.style.background = "#22c55e";
+    dot.style.boxShadow = "0 0 0 6px rgba(34, 197, 94, 0.15)";
+  } else if (mode === "offline") {
+    dot.style.background = "#facc15";
+    dot.style.boxShadow = "0 0 0 6px rgba(250, 204, 21, 0.15)";
+  } else if (mode === "error") {
+    dot.style.background = "#fb7185";
+    dot.style.boxShadow = "0 0 0 6px rgba(251, 113, 133, 0.15)";
+  } else {
+    dot.style.background = "#64748b";
+    dot.style.boxShadow = "0 0 0 6px rgba(100, 116, 139, 0.15)";
+  }
+}
+
+function setTerminal(text) {
+  const terminal = document.getElementById("terminal");
+  terminal.textContent = text;
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+async function connect() {
+  backend = normalizeBackendUrl(document.getElementById("backendUrl").value);
   token = document.getElementById("token").value.trim();
 
   if (!backend || !token) {
@@ -19,23 +52,27 @@ function connect() {
     socket.disconnect();
   }
 
-  socket = io(backend);
+  setMainStatus("Connecting...");
+  setStatusDot("neutral");
+  setTerminal("Mencoba terhubung ke backend...\n");
+
+  socket = io(backend, {
+    transports: ["websocket", "polling"]
+  });
 
   socket.on("connect", () => {
     socket.emit("auth", token);
   });
 
   socket.on("log", (text) => {
-    const terminal = document.getElementById("terminal");
-    terminal.textContent = text;
-    terminal.scrollTop = terminal.scrollHeight;
+    setTerminal(text || "Tidak ada output...");
   });
 
   socket.on("disconnect", () => {
     console.log("Socket disconnected");
   });
 
-  updateStatus();
+  await updateStatus();
 
   if (statusInterval) {
     clearInterval(statusInterval);
@@ -46,7 +83,7 @@ function connect() {
 
 async function api(path) {
   if (!backend || !token) {
-    alert("Connect dulu.");
+    alert("Connect dulu, Sensei.");
     return;
   }
 
@@ -60,9 +97,11 @@ async function api(path) {
 
     const data = await res.json();
     alert(data.message || JSON.stringify(data));
-    updateStatus();
+    await updateStatus();
   } catch (err) {
     alert("Gagal konek ke backend: " + err.message);
+    setMainStatus("Backend Error");
+    setStatusDot("error");
   }
 }
 
@@ -76,23 +115,43 @@ async function updateStatus() {
       },
     });
 
+    if (!res.ok) {
+      throw new Error("HTTP " + res.status);
+    }
+
     const data = await res.json();
 
-    document.getElementById("status").textContent = data.running ? "Online" : "Offline";
+    if (data.running) {
+      setMainStatus("Online");
+      setStatusDot("online");
+    } else {
+      setMainStatus("Offline");
+      setStatusDot("offline");
+    }
+
     document.getElementById("ram").textContent = `${data.ram.percent}%`;
     document.getElementById("cpu").textContent = `${data.cpu.load}% / ${data.cpu.cores} core`;
 
     if (data.storage) {
-      document.getElementById("storage").textContent = `${data.storage.percent}%`;
+      document.getElementById("storage").textContent = `${Math.round(data.storage.percent)}%`;
     } else {
       document.getElementById("storage").textContent = "-";
     }
   } catch (err) {
-    document.getElementById("status").textContent = "Backend Error";
+    document.getElementById("ram").textContent = "-";
+    document.getElementById("cpu").textContent = "-";
+    document.getElementById("storage").textContent = "-";
+    setMainStatus("Backend Error");
+    setStatusDot("error");
   }
 }
 
 window.onload = () => {
-  document.getElementById("backendUrl").value = localStorage.getItem("backend") || "";
-  document.getElementById("token").value = localStorage.getItem("token") || "";
+  const savedBackend = localStorage.getItem("backend") || "";
+  const savedToken = localStorage.getItem("token") || "";
+
+  document.getElementById("backendUrl").value = savedBackend;
+  document.getElementById("token").value = savedToken;
+
+  setStatusDot("neutral");
 };
