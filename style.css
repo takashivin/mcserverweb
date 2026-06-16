@@ -495,9 +495,9 @@ body {
 }
 
 .btn-stop {
-    background: linear-gradient(135deg, #ff6b86, #ef4444);
-    color: #fff5f7;
-    box-shadow: 0 10px 26px rgba(239, 68, 68, 0.24);
+    background: linear-gradient(135deg, #ff7a90, #ff4d6d);
+    color: #3b0710;
+    box-shadow: 0 10px 26px rgba(255, 77, 109, 0.24);
 }
 
 .btn-restart {
