@@ -42,6 +42,30 @@ function setStatusDot(mode) {
     }
 }
 
+function cleanTerminalOutput(text) {
+    if (!text) return "Tidak ada output...";
+
+    let output = String(text)
+        .replace(/\r/g, "")
+        .split("\n")
+        .map((line) => line.replace(/[ \t]+$/g, ""))
+        .join("\n");
+
+    const lines = output.split("\n");
+
+    while (lines.length && lines[0].trim() === "") {
+        lines.shift();
+    }
+
+    while (lines.length && lines[lines.length - 1].trim() === "") {
+        lines.pop();
+    }
+
+    output = lines.join("\n");
+
+    return output || "Tidak ada output...";
+}
+
 function setTerminal(text) {
     const terminal = terminalEl();
     const viewport = terminalViewportEl();
@@ -50,7 +74,7 @@ function setTerminal(text) {
         autoScroll ||
         (viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 25);
 
-    terminal.textContent = text || "Tidak ada output...";
+    terminal.textContent = cleanTerminalOutput(text);
 
     if (shouldStickBottom) {
         requestAnimationFrame(() => {

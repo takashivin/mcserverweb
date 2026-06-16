@@ -479,23 +479,43 @@ body {
 }
 
 .terminal-screen {
-    min-height: 440px;
-    max-height: 560px;
+    height: 520px;
     overflow: auto;
-    padding: 18px;
-    display: flex;
-    align-items: flex-end;
+    padding: 14px 18px;
+    display: block;
     background:
         linear-gradient(180deg, rgba(0, 6, 20, 0.96), rgba(0, 9, 26, 0.98));
+    scrollbar-color: rgba(86, 204, 242, 0.55) rgba(255, 255, 255, 0.04);
+    scrollbar-width: thin;
+}
+
+.terminal-screen::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.terminal-screen::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.terminal-screen::-webkit-scrollbar-thumb {
+    background: rgba(86, 204, 242, 0.55);
+    border-radius: 999px;
+    border: 2px solid rgba(3, 11, 25, 0.9);
+}
+
+.terminal-screen::-webkit-scrollbar-thumb:hover {
+    background: rgba(86, 204, 242, 0.8);
 }
 
 #terminal {
     width: 100%;
+    min-height: 100%;
     margin: 0;
     color: var(--green);
     font-family: Consolas, "Courier New", monospace;
     font-size: 14px;
-    line-height: 1.45;
+    line-height: 1.42;
     white-space: pre-wrap;
     word-break: break-word;
 }
@@ -643,6 +663,11 @@ body {
 }
 
 @media (max-width: 640px) {
+    .terminal-screen {
+        height: 420px;
+        padding: 12px;
+    }
+
     .app-shell {
         width: min(100% - 16px, 1180px);
         padding-top: 14px;

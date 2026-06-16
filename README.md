@@ -23,3 +23,11 @@ Features:
 Remember:
 - Do not upload backend .env to GitHub.
 - Backend URL should not end with slash.
+
+
+## v4 changes
+- Terminal area is now truly scrollable.
+- Removed bottom alignment that caused unused empty space.
+- Trimmed empty tmux capture lines from the top/bottom of terminal output.
+- Added custom scrollbar styling.
+- Mobile terminal height adjusted.
