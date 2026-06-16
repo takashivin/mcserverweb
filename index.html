@@ -7,47 +7,141 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-grid"></div>
+
   <main class="app">
-    <h1>Minecraft Bedrock Server</h1>
-    <p class="subtitle">Web control by takashivin</p>
+    <header class="hero">
+      <div class="hero-left">
+        <div class="badge">● Live Control Panel</div>
+        <h1>Minecraft Bedrock Server</h1>
+        <p class="subtitle">
+          Kontrol server Bedrock dari web — start, stop, restart, list player,
+          lihat terminal, dan monitor resource secara real-time.
+        </p>
+      </div>
 
-    <section class="login">
-      <input id="backendUrl" placeholder="Backend URL, contoh: https://xxxx.trycloudflare.com" />
-      <input id="token" placeholder="Token rahasia" type="password" />
-      <button onclick="connect()">Connect</button>
+      <div class="hero-right">
+        <div class="server-glow-card">
+          <div class="mini-label">Panel Status</div>
+          <div class="status-line">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Belum connect</span>
+          </div>
+          <small class="helper-text">Hubungkan ke backend untuk mulai kontrol server.</small>
+        </div>
+      </div>
+    </header>
+
+    <section class="panel connect-panel">
+      <div class="section-title">
+        <h2>Koneksi Backend</h2>
+        <p>Masukkan URL backend dan token rahasia.</p>
+      </div>
+
+      <div class="connect-grid">
+        <div class="input-group full">
+          <label for="backendUrl">Backend URL</label>
+          <input
+            id="backendUrl"
+            type="text"
+            placeholder="https://example.trycloudflare.com"
+          />
+        </div>
+
+        <div class="input-group full">
+          <label for="token">Token Rahasia</label>
+          <input
+            id="token"
+            type="password"
+            placeholder="Masukkan token dari file .env"
+          />
+        </div>
+
+        <button class="btn btn-primary full" onclick="connect()">
+          Connect to Backend
+        </button>
+      </div>
     </section>
 
-    <section class="cards">
-      <div class="card">
-        <span>Status</span>
-        <b id="status">-</b>
+    <section class="stats-grid">
+      <article class="stat-card">
+        <div class="stat-icon">🟢</div>
+        <div class="stat-info">
+          <span class="stat-label">Status</span>
+          <strong id="status">-</strong>
+          <small>Kondisi backend / server</small>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-icon">🧠</div>
+        <div class="stat-info">
+          <span class="stat-label">RAM</span>
+          <strong id="ram">-</strong>
+          <small>Penggunaan memori</small>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-icon">⚙️</div>
+        <div class="stat-info">
+          <span class="stat-label">CPU</span>
+          <strong id="cpu">-</strong>
+          <small>Load & jumlah core</small>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-icon">💾</div>
+        <div class="stat-info">
+          <span class="stat-label">Storage</span>
+          <strong id="storage">-</strong>
+          <small>Penyimpanan sistem</small>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel action-panel">
+      <div class="section-title">
+        <h2>Kontrol Server</h2>
+        <p>Tombol cepat untuk mengatur server Bedrock.</p>
       </div>
 
-      <div class="card">
-        <span>RAM</span>
-        <b id="ram">-</b>
-      </div>
+      <div class="button-row">
+        <button class="btn btn-start" onclick="api('/api/start')">
+          ▶ Start Server
+        </button>
 
-      <div class="card">
-        <span>CPU</span>
-        <b id="cpu">-</b>
-      </div>
+        <button class="btn btn-stop" onclick="api('/api/stop')">
+          ■ Stop Server
+        </button>
 
-      <div class="card">
-        <span>Storage</span>
-        <b id="storage">-</b>
+        <button class="btn btn-restart" onclick="api('/api/restart')">
+          ↻ Restart
+        </button>
+
+        <button class="btn btn-secondary" onclick="api('/api/list')">
+          ☰ List Player
+        </button>
       </div>
     </section>
 
-    <section class="buttons">
-      <button onclick="api('/api/start')">Start Server</button>
-      <button onclick="api('/api/stop')" class="danger">Stop Server</button>
-      <button onclick="api('/api/restart')" class="warn">Restart</button>
-      <button onclick="api('/api/list')">List Player</button>
-    </section>
+    <section class="panel terminal-panel">
+      <div class="terminal-top">
+        <div>
+          <h2>Live Terminal</h2>
+          <p>Output tmux dari server Bedrock.</p>
+        </div>
 
-    <section>
-      <h2>Terminal</h2>
+        <div class="terminal-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
       <pre id="terminal">Belum connect...</pre>
     </section>
   </main>
