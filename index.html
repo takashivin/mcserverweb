@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minecraft Bedrock Control</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <h1>Minecraft Bedrock Server</h1>
+    <p class="subtitle">Web control by takashivin</p>
+
+    <section class="login">
+      <input id="backendUrl" placeholder="Backend URL, contoh: https://xxxx.trycloudflare.com" />
+      <input id="token" placeholder="Token rahasia" type="password" />
+      <button onclick="connect()">Connect</button>
+    </section>
+
+    <section class="cards">
+      <div class="card">
+        <span>Status</span>
+        <b id="status">-</b>
+      </div>
+
+      <div class="card">
+        <span>RAM</span>
+        <b id="ram">-</b>
+      </div>
+
+      <div class="card">
+        <span>CPU</span>
+        <b id="cpu">-</b>
+      </div>
+
+      <div class="card">
+        <span>Storage</span>
+        <b id="storage">-</b>
+      </div>
+    </section>
+
+    <section class="buttons">
+      <button onclick="api('/api/start')">Start Server</button>
+      <button onclick="api('/api/stop')" class="danger">Stop Server</button>
+      <button onclick="api('/api/restart')" class="warn">Restart</button>
+      <button onclick="api('/api/list')">List Player</button>
+    </section>
+
+    <section>
+      <h2>Terminal</h2>
+      <pre id="terminal">Belum connect...</pre>
+    </section>
+  </main>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
