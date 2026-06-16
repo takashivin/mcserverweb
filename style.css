@@ -480,14 +480,13 @@ body {
 
 .terminal-screen {
     height: 520px;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: auto;
     padding: 14px 18px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    display: block;
     background:
         linear-gradient(180deg, rgba(0, 6, 20, 0.96), rgba(0, 9, 26, 0.98));
-    scrollbar-color: rgba(86, 204, 242, 0.55) rgba(255, 255, 255, 0.04);
+    scrollbar-color: rgba(86, 204, 242, 0.65) rgba(255, 255, 255, 0.05);
     scrollbar-width: thin;
 }
 
@@ -501,25 +500,25 @@ body {
 }
 
 .terminal-screen::-webkit-scrollbar-thumb {
-    background: rgba(86, 204, 242, 0.55);
+    background: rgba(86, 204, 242, 0.62);
     border-radius: 999px;
     border: 2px solid rgba(3, 11, 25, 0.9);
 }
 
 .terminal-screen::-webkit-scrollbar-thumb:hover {
-    background: rgba(86, 204, 242, 0.8);
+    background: rgba(86, 204, 242, 0.85);
 }
 
 #terminal {
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
     margin: 0;
     color: var(--green);
     font-family: Consolas, "Courier New", monospace;
     font-size: 14px;
     line-height: 1.42;
-    white-space: pre-wrap;
-    word-break: break-word;
-    flex: 0 0 auto;
+    white-space: pre;
+    word-break: normal;
 }
 
 .toast-wrap {

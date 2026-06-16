@@ -33,8 +33,9 @@ Remember:
 - Mobile terminal height adjusted.
 
 
-## v5 terminal behavior
-- Terminal text now sits at the bottom when the log is short.
-- History is still scrollable upward normally.
-- No unused empty block under the text.
-- Auto-scroll still works, but you can scroll up to inspect history.
+## v6 terminal behavior
+- Terminal is now truly scrollable up/down.
+- Auto-scroll automatically turns off when the user scrolls upward.
+- Auto-scroll automatically turns on again when the user returns to the bottom.
+- Clear now stores a baseline, so old logs do not immediately reappear on the next update.
+- Terminal uses normal top-to-bottom text flow for readable history.

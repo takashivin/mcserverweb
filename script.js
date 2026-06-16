@@ -3,6 +3,8 @@ let token = "";
 let socket = null;
 let statusInterval = null;
 let autoScroll = true;
+let clearBaseline = "";
+let lastCleanOutput = "";
 
 const terminalEl = () => document.getElementById("terminal");
 const terminalViewportEl = () => document.getElementById("terminalViewport");
@@ -42,8 +44,22 @@ function setStatusDot(mode) {
     }
 }
 
+function setAutoScrollState(enabled, silent = false) {
+    autoScroll = enabled;
+    const btn = autoScrollBtnEl();
+    if (btn) btn.classList.toggle("active", autoScroll);
+
+    if (!silent) {
+        showToast(
+            "Auto Scroll",
+            autoScroll ? "Auto scroll aktif. Terminal akan ikut ke log terbaru." : "Auto scroll mati. Kamu bisa scroll history tanpa ditarik balik.",
+            "info"
+        );
+    }
+}
+
 function cleanTerminalOutput(text) {
-    if (!text) return "Tidak ada output...";
+    if (!text) return "";
 
     let output = String(text)
         .replace(/\r/g, "")
@@ -61,21 +77,53 @@ function cleanTerminalOutput(text) {
         lines.pop();
     }
 
-    output = lines.join("\n");
+    return lines.join("\n");
+}
 
-    return output || "Tidak ada output...";
+function removeClearedBaseline(output) {
+    if (!clearBaseline) return output;
+
+    if (output === clearBaseline) {
+        return "";
+    }
+
+    if (output.startsWith(clearBaseline + "\n")) {
+        return output.slice(clearBaseline.length + 1);
+    }
+
+    // Kalau tmux capture kepotong, cari overlap akhir baseline dengan awal output.
+    const baseLines = clearBaseline.split("\n");
+    const outLines = output.split("\n");
+    const max = Math.min(baseLines.length, outLines.length);
+
+    for (let count = max; count >= 1; count--) {
+        const baseTail = baseLines.slice(-count).join("\n");
+        const outHead = outLines.slice(0, count).join("\n");
+
+        if (baseTail === outHead) {
+            return outLines.slice(count).join("\n");
+        }
+    }
+
+    return output;
+}
+
+function isNearBottom(viewport) {
+    return viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 25;
 }
 
 function setTerminal(text) {
     const terminal = terminalEl();
     const viewport = terminalViewportEl();
 
-    const nearBottom = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 25;
-    const shouldStickBottom = autoScroll || nearBottom;
+    const wasNearBottom = isNearBottom(viewport);
+    const cleaned = cleanTerminalOutput(text);
+    lastCleanOutput = cleaned;
 
-    terminal.textContent = cleanTerminalOutput(text);
+    const visibleOutput = removeClearedBaseline(cleaned);
+    terminal.textContent = visibleOutput || "Tidak ada output...";
 
-    if (shouldStickBottom) {
+    if (autoScroll || wasNearBottom) {
         requestAnimationFrame(() => {
             viewport.scrollTop = viewport.scrollHeight;
         });
@@ -168,6 +216,7 @@ async function connectBackend() {
         socket.disconnect();
     }
 
+    clearBaseline = "";
     setMainStatus("Connecting...", "Sedang mencoba terhubung ke backend...");
     setStatusDot("connecting");
     setTerminal("Mencoba terhubung ke backend...\n");
@@ -181,7 +230,7 @@ async function connectBackend() {
     });
 
     socket.on("log", (text) => {
-        setTerminal(text || "Tidak ada output...");
+        setTerminal(text || "");
     });
 
     socket.on("disconnect", () => {
@@ -314,14 +363,9 @@ async function updateStatus() {
 }
 
 function toggleAutoScroll() {
-    autoScroll = !autoScroll;
-    autoScrollBtnEl().classList.toggle("active", autoScroll);
-
+    setAutoScrollState(!autoScroll);
     if (autoScroll) {
         terminalViewportEl().scrollTop = terminalViewportEl().scrollHeight;
-        showToast("Auto Scroll", "Auto scroll diaktifkan.", "info");
-    } else {
-        showToast("Auto Scroll", "Auto scroll dimatikan.", "info");
     }
 }
 
@@ -335,8 +379,12 @@ async function copyTerminal() {
 }
 
 function clearTerminalView() {
-    terminalEl().textContent = "";
-    showToast("Terminal cleared", "Tampilan terminal dibersihkan.", "info");
+    // Karena backend mengirim snapshot terminal berulang-ulang,
+    // clear harus menyimpan baseline agar log lama tidak muncul lagi di update berikutnya.
+    clearBaseline = lastCleanOutput || cleanTerminalOutput(terminalEl().textContent || "");
+    terminalEl().textContent = "Terminal dibersihkan. Log baru akan muncul setelah ini...";
+    terminalViewportEl().scrollTop = terminalViewportEl().scrollHeight;
+    showToast("Terminal cleared", "Log lama disembunyikan. Update berikutnya cuma menampilkan log baru.", "info");
 }
 
 window.onload = () => {
@@ -348,4 +396,15 @@ window.onload = () => {
 
     setStatusDot("neutral");
     setMainStatus("Belum connect", "Masukkan backend URL dan token untuk mulai.");
+
+    const viewport = terminalViewportEl();
+    viewport.addEventListener("scroll", () => {
+        // Kalau user scroll ke atas, auto-scroll mati otomatis agar history bisa dibaca.
+        // Kalau user balik ke bawah, auto-scroll aktif lagi.
+        if (isNearBottom(viewport)) {
+            if (!autoScroll) setAutoScrollState(true, true);
+        } else {
+            if (autoScroll) setAutoScrollState(false, true);
+        }
+    });
 };
