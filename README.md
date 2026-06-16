@@ -1,41 +1,15 @@
-# Bedrock Control Panel UI v3
+# mc-web-control backend v2
 
-Upload/replace these files to your GitHub Pages repo:
+Perubahan:
+- Start membuat tmux shell session dulu, lalu menjalankan ./bedrock_server di dalamnya.
+- Restart mengirim `stop`, menunggu, lalu menjalankan `./bedrock_server` lagi di tmux yang sama.
+- Stop mengirim `stop`, menunggu, lalu `tmux kill-session` untuk end task tmux.
+- Status sekarang cek proses bedrock_server, bukan cuma tmux session.
 
-- index.html
-- style.css
-- script.js
-- favicon.svg
-- icon-192.png
-- icon-512.png
-- site.webmanifest
-
-Features:
-- Fredoka + Quicksand font
-- Font Awesome icons
-- Custom toast, no browser alert
-- Stop server has 2-step confirmation
-- Restart has confirmation
-- Terminal auto-scroll toggle
-- Copy and clear terminal buttons
-- Web icon / favicon included
-
-Remember:
-- Do not upload backend .env to GitHub.
-- Backend URL should not end with slash.
-
-
-## v4 changes
-- Terminal area is now truly scrollable.
-- Removed bottom alignment that caused unused empty space.
-- Trimmed empty tmux capture lines from the top/bottom of terminal output.
-- Added custom scrollbar styling.
-- Mobile terminal height adjusted.
-
-
-## v6 terminal behavior
-- Terminal is now truly scrollable up/down.
-- Auto-scroll automatically turns off when the user scrolls upward.
-- Auto-scroll automatically turns on again when the user returns to the bottom.
-- Clear now stores a baseline, so old logs do not immediately reappear on the next update.
-- Terminal uses normal top-to-bottom text flow for readable history.
+Cara pakai:
+1. Backup server.js lama:
+   cp ~/mc-web-control/server.js ~/mc-web-control/server.js.bak
+2. Replace server.js dengan file ini.
+3. Restart backend:
+   pm2 restart mc-web-control
+   # atau kalau manual: CTRL+C lalu node server.js

@@ -306,14 +306,24 @@ async function stopServerFlow() {
 }
 
 async function restartServerFlow() {
-    const ok = await openConfirm({
+    const step1 = await openConfirm({
         title: "Restart server?",
-        message: "Server akan stop sebentar lalu menyala lagi. Player yang online bisa terputus.",
-        confirmText: "Ya, Restart",
+        message: "Restart akan mematikan server sebentar lalu menyalakannya lagi. Semua player bisa terputus.",
+        confirmText: "Lanjut",
         cancelText: "Batal"
     });
 
-    if (!ok) return;
+    if (!step1) return;
+
+    const step2 = await openConfirm({
+        title: "Yakin restart sekarang?",
+        message: "Ini bakal ngirim perintah restart ke Bedrock server sekarang juga.",
+        confirmText: "Ya, Restart Server",
+        cancelText: "Jangan"
+    });
+
+    if (!step2) return;
+
     api("/api/restart", "Restart Server");
 }
 
