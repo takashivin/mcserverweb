@@ -18,6 +18,52 @@
     --red: #ff7a90;
     --orange: #ffb454;
     --shadow: 0 22px 50px rgba(0, 0, 0, 0.35);
+    --ease-spring: cubic-bezier(.2, .9, .2, 1);
+}
+
+@keyframes pageFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.985);
+        filter: blur(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes softFloat {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -10px, 0); }
+}
+
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateX(18px) translateY(12px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(0) scale(1);
+    }
+}
+
+@keyframes toastOut {
+    from {
+        opacity: 1;
+        transform: translateX(0) translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(22px) translateY(8px) scale(0.96);
+    }
+}
+
+@keyframes toastTimer {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
 }
 
 html,
@@ -44,6 +90,7 @@ body {
     pointer-events: none;
     opacity: 0.45;
     z-index: 0;
+    animation: softFloat 7s ease-in-out infinite;
 }
 
 .bg-1 {
@@ -55,6 +102,7 @@ body {
 }
 
 .bg-2 {
+    animation-delay: -2.5s;
     width: 340px;
     height: 340px;
     background: #735dff;
@@ -90,6 +138,7 @@ body {
 }
 
 .hero-card {
+    animation: pageFadeUp 0.55s var(--ease-spring) both;
     display: grid;
     grid-template-columns: 1.4fr 0.85fr;
     gap: 18px;
@@ -186,6 +235,8 @@ body {
 }
 
 .panel-card {
+    animation: pageFadeUp 0.55s var(--ease-spring) both;
+    animation-delay: 0.08s;
     padding: 20px;
     margin-bottom: 18px;
 }
@@ -269,6 +320,7 @@ body {
 }
 
 .stat-card {
+    animation: pageFadeUp 0.55s var(--ease-spring) both;
     padding: 18px;
     display: flex;
     align-items: center;
@@ -327,6 +379,78 @@ body {
     color: var(--muted);
 }
 
+
+.stats-grid .stat-card:nth-child(1) { animation-delay: 0.10s; }
+.stats-grid .stat-card:nth-child(2) { animation-delay: 0.16s; }
+.stats-grid .stat-card:nth-child(3) { animation-delay: 0.22s; }
+.stats-grid .stat-card:nth-child(4) { animation-delay: 0.28s; }
+
+.server-endpoint {
+    margin-bottom: 18px;
+    padding: 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(86, 204, 242, 0.18);
+    background:
+        linear-gradient(135deg, rgba(86, 204, 242, 0.13), rgba(155, 135, 245, 0.10)),
+        rgba(7, 16, 30, 0.72);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.025);
+    animation: pageFadeUp 0.45s var(--ease-spring) both;
+}
+
+.server-endpoint.hidden {
+    display: none;
+}
+
+.endpoint-left,
+.endpoint-right {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.endpoint-label,
+.endpoint-right span {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.endpoint-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.endpoint-left strong,
+.endpoint-right strong {
+    font-family: "Fredoka", sans-serif;
+    color: #e9fbff;
+    letter-spacing: 0.2px;
+}
+
+.endpoint-left strong {
+    font-size: clamp(18px, 3vw, 26px);
+    word-break: break-all;
+}
+
+.endpoint-right {
+    min-width: 100px;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.endpoint-right strong {
+    font-size: 25px;
+}
+
 .button-grid {
     display: flex;
     flex-wrap: wrap;
@@ -349,8 +473,9 @@ body {
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.03);
+    transform: translateY(-3px);
+    filter: brightness(1.04);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.22);
 }
 
 .btn:active {
@@ -370,9 +495,9 @@ body {
 }
 
 .btn-stop {
-    background: linear-gradient(135deg, #ff9ab0, #ff6b86);
+    background: linear-gradient(135deg, #ff6b86, #ef4444);
     color: #fff5f7;
-    box-shadow: 0 10px 26px rgba(255, 107, 134, 0.22);
+    box-shadow: 0 10px 26px rgba(239, 68, 68, 0.24);
 }
 
 .btn-restart {
@@ -532,14 +657,32 @@ body {
 }
 
 .toast {
+    position: relative;
+    overflow: hidden;
     min-width: 280px;
     max-width: 380px;
     border-radius: 18px;
-    padding: 14px 16px;
+    padding: 14px 16px 18px;
     box-shadow: var(--shadow);
     border: 1px solid rgba(255,255,255,0.08);
     color: white;
-    animation: slideIn 0.2s ease;
+    animation: toastIn 0.28s var(--ease-spring) both;
+}
+
+.toast.leaving {
+    animation: toastOut 0.22s ease forwards;
+}
+
+.toast::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.72);
+    transform-origin: left;
+    animation: toastTimer 3.2s linear forwards;
 }
 
 .toast.success {
@@ -680,6 +823,16 @@ body {
 
     .connect-grid {
         grid-template-columns: 1fr;
+    }
+
+    .server-endpoint {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .endpoint-right {
+        align-items: flex-start;
+        min-width: 0;
     }
 
     .button-grid,

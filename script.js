@@ -6,12 +6,25 @@ let autoScroll = true;
 let clearBaseline = "";
 let lastCleanOutput = "";
 
+const PUBLIC_SERVER_ADDRESS = "relations-webmaster.gl.at.ply.gg";
+const PUBLIC_SERVER_PORT = "51633";
+
 const terminalEl = () => document.getElementById("terminal");
 const terminalViewportEl = () => document.getElementById("terminalViewport");
 const autoScrollBtnEl = () => document.getElementById("autoScrollBtn");
 
 function normalizeBackendUrl(url) {
     return url.trim().replace(/\/+$/, "");
+}
+
+function showServerEndpoint() {
+    const box = document.getElementById("serverEndpoint");
+    const address = document.getElementById("publicAddressText");
+    const port = document.getElementById("publicPortText");
+
+    if (address) address.textContent = PUBLIC_SERVER_ADDRESS;
+    if (port) port.textContent = PUBLIC_SERVER_PORT;
+    if (box) box.classList.remove("hidden");
 }
 
 function setMainStatus(text, subtext = "") {
@@ -143,10 +156,8 @@ function showToast(title, message, type = "info") {
     wrap.appendChild(toast);
 
     setTimeout(() => {
-        toast.style.opacity = "0";
-        toast.style.transform = "translateY(10px)";
-        toast.style.transition = "0.2s ease";
-        setTimeout(() => toast.remove(), 220);
+        toast.classList.add("leaving");
+        setTimeout(() => toast.remove(), 240);
     }, 3200);
 }
 
@@ -346,6 +357,8 @@ async function updateStatus() {
         }
 
         const data = await res.json();
+
+        showServerEndpoint();
 
         if (data.running) {
             setMainStatus("Online", "Server sedang berjalan.");
